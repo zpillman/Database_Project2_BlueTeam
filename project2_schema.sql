@@ -72,7 +72,8 @@ CREATE TABLE Books
  title     varchar(255) NOT NULL,
  cover     varchar(255) NULL,
  publisher varchar(255) NULL,
- pages     int NULL
+ pages     integer NULL,
+ is_checked_out boolean DEFAULT false
 );
 
 CREATE UNIQUE INDEX PK_book ON Books
@@ -83,10 +84,10 @@ CREATE UNIQUE INDEX PK_book ON Books
 --BookLoans
 CREATE TABLE BookLoans
 (
- date_out date NOT NULL,
- due_date date NOT NULL,
+ date_out date NOT NULL DEFAULT CURRENT_DATE,
+ due_date date NOT NULL DEFAULT CURRENT_DATE + 14,
  date_in  date NULL,
- card_id  int NOT NULL,
+ card_id  serial NOT NULL,
  loan_id  serial NOT NULL,
  isbn10   varchar(10) NOT NULL
 );
@@ -127,7 +128,7 @@ CREATE UNIQUE INDEX PK_Fines ON Fines
 --Borrowers Table
 CREATE TABLE Borrowers
 (
- card_id    int NOT NULL,
+ card_id    serial NOT NULL,
  ssn        varchar(11) NOT NULL,
  first_name varchar(255) NOT NULL,
  last_name  varchar(255) NOT NULL,
@@ -156,8 +157,8 @@ CREATE INDEX fkIdx_120 ON Isbns
 );
 
 --Execute queries to move data into expected places
-INSERT INTO Borrowers(card_id, ssn, first_name, last_name, email, address, city, state, phone)
-SELECT borrower_id, ssn, first_name, last_name, email, addr, city, state, phone FROM BorrowersFile;
+INSERT INTO Borrowers(ssn, first_name, last_name, email, address, city, state, phone)
+SELECT ssn, first_name, last_name, email, addr, city, state, phone FROM BorrowersFile;
 
 INSERT INTO Books(isbn10, title, cover, publisher, pages)
 SELECT isbn10, title, cover, publisher, pages FROM BooksFile;
@@ -179,7 +180,7 @@ ALTER TABLE BookAuthors ADD CONSTRAINT FK_117 FOREIGN KEY ( isbn10 ) REFERENCES 
 ALTER TABLE BookAuthors ADD CONSTRAINT FK_63 FOREIGN KEY ( author_id ) REFERENCES Authors ( author_id );
 ALTER TABLE Isbns ADD CONSTRAINT FK_120 FOREIGN KEY ( isbn10 ) REFERENCES Books ( isbn10 );
 ALTER TABLE BookLoans ADD CONSTRAINT FK_111 FOREIGN KEY ( card_id ) REFERENCES Borrowers ( card_id );
-ALTER TABLE BookLoans ADD CONSTRAINT FK_114 FOREIGN KEY ( loan_id ) REFERENCES Fines ( loan_id );
+ALTER TABLE Fines ADD CONSTRAINT FK_114 FOREIGN KEY ( loan_id ) REFERENCES BookLoans ( loan_id );
 ALTER TABLE BookLoans ADD CONSTRAINT FK_123 FOREIGN KEY ( isbn10 ) REFERENCES Books ( isbn10 );
 
 --Drop Temp Tables
