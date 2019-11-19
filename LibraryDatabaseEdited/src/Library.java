@@ -352,7 +352,7 @@ co.setVisible(true);
 
     }
 
-    public List<BookLoan> findBookLoanByTerm(String term) {
+    public List<BookLoan> searchBookLoanByTerm(String term) {
         term = "%" + term + "%";
         String searchBookLoansByTerm = "SELECT BookLoans.loan_id, Borrowers.card_id, "
             + "Borrowers.first_name, Borrowers.last_name, Books.isbn10 FROM BookLoans "

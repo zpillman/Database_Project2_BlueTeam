@@ -4,17 +4,33 @@
  * and open the template in the editor.
  */
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Warren
  */
 public class CheckIn extends javax.swing.JFrame {
 
+    private final String url = "jdbc:postgresql://localhost:5434/postgres";
+    private final String user = "zpillman";
+    private final String password = "password";
+
     /**
      * Creates new form CheckIn
      */
     public CheckIn() {
         initComponents();
+    }
+
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
     }
 
     /**
@@ -81,48 +97,51 @@ public class CheckIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckIn_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckIn_OKActionPerformed
-CheckInResults cir = new CheckInResults();
-cir.setVisible(true);
-dispose();
+        String userInput = CheckIn_TextBox.getText();
+        String term = "%" + userInput + "%";
+
+        List<BookLoan> bookLoans = searchBookLoanByTerm(term);
+
+        CheckInResults cir = new CheckInResults(bookLoans);
+        cir.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckIn_OKActionPerformed
 
     private void CheckIn_TextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckIn_TextBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_CheckIn_TextBoxActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CheckIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CheckIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CheckIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CheckIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    public List<BookLoan> searchBookLoanByTerm(String term) {
+        term = "%" + term + "%";
+        String searchBookLoansByTerm = "SELECT BookLoans.loan_id, Borrowers.card_id, "
+            + "Borrowers.first_name, Borrowers.last_name, Books.isbn10 FROM BookLoans "
+            + "JOIN Books ON Books.isbn10 = BookLoans.isbn10 "
+            + "JOIN Borrowers ON Borrowers.card_id = BookLoans.card_id "
+            + "WHERE Borrowers.first_name ILIKE ? "
+            + "OR Borrowers.last_name ILIKE ? "
+            + "OR Books.isbn10 ILIKE ? ";
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CheckIn().setVisible(true);
+        List<BookLoan> bookLoans = new ArrayList<>();
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(searchBookLoansByTerm)) {
+            pstmt.setString(1, term);
+            pstmt.setString(2, term);
+            pstmt.setString(3, term);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                BookLoan bookLoan = new BookLoan();
+                bookLoan.setLoanId(rs.getInt("loan_id"));
+                bookLoan.setIsbn10(rs.getString("isbn10"));
+                bookLoan.setCardId(rs.getInt("card_id"));
+                bookLoans.add(bookLoan);
             }
-        });
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return bookLoans;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,5 +1,15 @@
 
 import static java.awt.SystemColor.window;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JFrame;
 
 /*
@@ -14,11 +24,28 @@ import javax.swing.JFrame;
  */
 public class CheckInResults extends javax.swing.JFrame {
 
+    private final String url = "jdbc:postgresql://localhost:5434/postgres";
+    private final String user = "zpillman";
+    private final String password = "password";
+
+    String isbn10;
+    int loan_id;
+
+    ArrayList<String> bookLoansStrings = new ArrayList<>();
+
     /**
      * Creates new form CheckInResults
      */
-    public CheckInResults() {
+    public CheckInResults(List<BookLoan> bookLoans) {
+        for(BookLoan b : bookLoans) {
+            bookLoansStrings.add(b.toString());
+        }
+
         initComponents();
+    }
+
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
     }
 
     /**
@@ -44,7 +71,7 @@ public class CheckInResults extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         CheckInResults_List.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = bookLoansStrings.toArray(new String[bookLoansStrings.size()]);
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -101,52 +128,84 @@ public class CheckInResults extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 // BACK BUTTON
     private void CheckInResults_BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInResults_BackActionPerformed
-CheckIn ci = new CheckIn();
-ci.setVisible(true);
-dispose();
+        CheckIn ci = new CheckIn();
+        ci.setVisible(true);
+        dispose();
 //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }//GEN-LAST:event_CheckInResults_BackActionPerformed
 
-//CHECK IN BUTTON
     private void CheckInResults_CIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInResults_CIActionPerformed
-CheckInSuccess cis = new CheckInSuccess();
-cis.setVisible(true);
-dispose();
+        //get the user selected option from the list
+        String userSelectedOption = (String)CheckInResults_List.getSelectedValue();
+
+        //dirty string processing for the isbn number
+        //regex this bitch
+        String pattern = "(isbn10=')\\w+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(userSelectedOption);
+
+        if(m.find()) {
+            isbn10 = m.group(0);
+            isbn10 = isbn10.substring(isbn10.lastIndexOf("=") + 1);
+            isbn10 = isbn10.substring(isbn10.lastIndexOf("'") + 1);
+        }
+
+        //dirty string processing for loan_id
+        pattern = "(loanId=)\\w+";
+        r = Pattern.compile(pattern);
+        m = r.matcher(userSelectedOption);
+
+        String tempLoanIdString;
+        if(m.find()) {
+            tempLoanIdString = m.group(0);
+            tempLoanIdString = tempLoanIdString.substring(tempLoanIdString.lastIndexOf("=") + 1);
+            loan_id = Integer.parseInt(tempLoanIdString);
+        }
+
+        System.out.println("isbn10 = " + isbn10);
+        System.out.println("loan_id = " + loan_id);
+
+        checkInBook(loan_id, isbn10);
+
+        System.out.println(userSelectedOption);
+
+        CheckInSuccess cis = new CheckInSuccess();
+        cis.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckInResults_CIActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CheckInResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CheckInResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CheckInResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CheckInResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    public void checkInBook(int loan_id, String isbn10) {
+        String updateBookLoansDateInSQL = "UPDATE BookLoans "
+            + "SET date_in = CURRENT_DATE "
+            + "WHERE BookLoans.loan_id = ?";
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CheckInResults().setVisible(true);
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBookLoansDateInSQL)) {
+            pstmt.setInt(1, loan_id);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                System.out.println("Successful Update");
             }
-        });
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        String updateBooksIsCheckedOutSQL = "UPDATE Books SET is_checked_out = false "
+            + "WHERE Books.isbn10 = ?";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBooksIsCheckedOutSQL)) {
+            pstmt.setString(1, isbn10);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                System.out.println("Successful Update");
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
