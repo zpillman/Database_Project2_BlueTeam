@@ -1,3 +1,9 @@
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,11 +15,18 @@
  * @author Warren
  */
 public class CheckOutResults extends javax.swing.JFrame {
-
+    
+    ArrayList<String> bookListString = new ArrayList<>();
+    String isbn10;
+    
+    
     /**
      * Creates new form CheckOutResults
      */
-    public CheckOutResults() {
+    public CheckOutResults(List<Book> listOfBooks) {
+        for(Book b : listOfBooks) {
+            bookListString.add(b.toString());
+        }
         initComponents();
     }
 
@@ -29,8 +42,8 @@ public class CheckOutResults extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         CheckOutResults_List = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        CheckOutButton = new javax.swing.JButton();
+        BackButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Check Out Results");
@@ -40,7 +53,7 @@ public class CheckOutResults extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         CheckOutResults_List.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = bookListString.toArray(new String[bookListString.size()]);
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -60,11 +73,11 @@ public class CheckOutResults extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(16, 15, 0, 15);
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
-        jButton1.setText("Check Out");
-        jButton1.setPreferredSize(new java.awt.Dimension(100, 60));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        CheckOutButton.setText("Check Out");
+        CheckOutButton.setPreferredSize(new java.awt.Dimension(100, 60));
+        CheckOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                CheckOutButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -73,13 +86,13 @@ public class CheckOutResults extends javax.swing.JFrame {
         gridBagConstraints.ipady = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(11, 61, 18, 0);
-        getContentPane().add(jButton1, gridBagConstraints);
+        getContentPane().add(CheckOutButton, gridBagConstraints);
 
-        jButton2.setText("Back");
-        jButton2.setPreferredSize(new java.awt.Dimension(100, 60));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        BackButton.setText("Back");
+        BackButton.setPreferredSize(new java.awt.Dimension(100, 60));
+        BackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                BackButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -89,62 +102,47 @@ public class CheckOutResults extends javax.swing.JFrame {
         gridBagConstraints.ipady = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(11, 178, 18, 0);
-        getContentPane().add(jButton2, gridBagConstraints);
+        getContentPane().add(BackButton, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-CheckOut co = new CheckOut();
-co.setVisible(true);
-dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
+        CheckOut co = new CheckOut();
+        co.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_BackButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-CheckOutVerify cov = new CheckOutVerify();
-cov.setVisible(true);
-dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void CheckOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutButtonActionPerformed
+        //do some super ugly string parsing
+        String userSelectedBook = (String)CheckOutResults_List.getSelectedValue();
+        System.out.println(userSelectedBook);
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CheckOutResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CheckOutResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CheckOutResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CheckOutResults.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        //regex this bitch
+        String pattern = "(isbn10=')\\w+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(userSelectedBook);
+
+        if(m.find()) {
+            isbn10 = m.group(0);
+            isbn10 = isbn10.substring(isbn10.lastIndexOf("=") + 1);
+            isbn10 = isbn10.substring(isbn10.lastIndexOf("'") + 1);
+
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CheckOutResults().setVisible(true);
-            }
-        });
-    }
+        System.out.println("parsed isbn10 = " + isbn10);
+
+
+        CheckOutVerify cov = new CheckOutVerify(isbn10);
+        //System.out.println("USER SELECTED VALUE = " + userSelectedValue);
+        cov.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_CheckOutButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BackButton;
+    private javax.swing.JButton CheckOutButton;
     private javax.swing.JList CheckOutResults_List;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

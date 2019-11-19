@@ -4,18 +4,40 @@
  * and open the template in the editor.
  */
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Warren
  */
 public class CheckOutVerify extends javax.swing.JFrame {
 
+    int cardId;
+    String isbn10;
+
+    private final String url = "jdbc:postgresql://localhost:5434/postgres";
+    private final String user = "zpillman";
+    private final String password = "password";
+
     /**
      * Creates new form CheckOutVerify
      */
-    public CheckOutVerify() {
+    public CheckOutVerify(String isbn10) {
+        this.isbn10 = isbn10;
         initComponents();
     }
+
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
+    }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,46 +106,165 @@ public class CheckOutVerify extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckOutVerify_ContinueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutVerify_ContinueActionPerformed
-//WILL SHOW MESSAGE WITH ERROR 
-CheckOutSuccess cos = new CheckOutSuccess();
-cos.setVisible(true);
-dispose();
-        
+        cardId = Integer.parseInt(CheckOutVerify_TextBox.getText());
+
+        //make sure the borrower exists
+        List<Borrower> foundBorrower = findBorrowerByID(cardId);
+        if(foundBorrower.isEmpty()) {
+            //TODO throw actual error that user doesn't exist
+            System.out.println("Error, User does not exist.");
+        }
+
+        checkOutBook(cardId, isbn10);
+
+        CheckOutSuccess cos = new CheckOutSuccess();
+        cos.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckOutVerify_ContinueActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CheckOutVerify.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CheckOutVerify.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CheckOutVerify.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CheckOutVerify.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    public List<Borrower> findBorrowerByID(int cardID) {
+        String SQL = "SELECT * "
+            + "FROM Borrowers "
+            + "WHERE card_id = ?";
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CheckOutVerify().setVisible(true);
+        List<Borrower> borrowersList = null;
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setInt(1, cardID);
+            ResultSet rs = pstmt.executeQuery();
+            borrowersList = mapResultSetToBorrower(rs);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return borrowersList;
+    }
+
+    public void checkOutBook(int cardId, String isbn) {
+        //first make sure the user hasn't checked out too many books
+        String getBookLoansForCardIdSQL = "SELECT COUNT(*) AS books_checked_out "
+            + "FROM BookLoans "
+            + "WHERE BookLoans.card_id = ? ";
+
+        int booksCheckedOut = 0;
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getBookLoansForCardIdSQL)) {
+            pstmt.setInt(1, cardId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                booksCheckedOut = rs.getInt("books_checked_out");
             }
-        });
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        if(booksCheckedOut > 3) {
+            System.out.println("Error, That user has too many books checked out.");
+            return;
+        } /*else {
+      System.out.println("The user is under the maximum checkout limit(3)!");
+    }*/
+
+        //Ensure the book isn't checked out already
+        List<Book> books = findBooksByIsbn(isbn);
+
+        for(Book book : books) {
+            System.out.println(book);
+        }
+
+        Book bookFound = books.get(0);
+
+        if(bookFound.isCheckedOut()) {
+            System.out.println("Error, That book is already checked out.");
+            return;
+        }/* else {
+      System.out.println("The book is available to checkout!");
+    }*/
+
+        String insertBookLoan = "INSERT INTO BookLoans(card_id, isbn10) "
+            + "VALUES(?, ?)";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(insertBookLoan)) {
+            pstmt.setInt(1, cardId);
+            pstmt.setString(2 ,bookFound.getIsbn10());
+            ResultSet rs = pstmt.executeQuery();
+            //TODO Ensure the record was properly inserted.
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        String updateBookIsCheckedOut = "UPDATE Books SET is_checked_out = TRUE "
+            + "WHERE Books.isbn10 = ? ";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBookIsCheckedOut)) {
+            pstmt.setString(1 , bookFound.getIsbn10());
+            ResultSet rs = pstmt.executeQuery();
+            //TODO Ensure the update went through.
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    public List<Book> findBooksByIsbn(String isbn) {
+        String SQL = "SELECT Books.isbn10, Books.title, Books.cover, Books.publisher, Books.pages, "
+            + "Books.is_checked_out "
+            + "FROM Books "
+            + "JOIN Isbns ON Isbns.isbn10 = Books.isbn10 "
+            + "WHERE Books.isbn10 = ? "
+            + "OR Isbns.isbn13 = ?";
+
+        List<Book> booksList = new ArrayList<>();
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, isbn);
+            pstmt.setString(2, isbn);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            booksList = mapResultSetToBook(rs);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return booksList;
+
+    }
+
+    private List<Book> mapResultSetToBook(ResultSet rs) throws SQLException{
+        ArrayList<Book> listOfBooks = new ArrayList<Book>();
+
+        while (rs.next()) {
+            Book book = new Book();
+            book.setIsbn10(rs.getString("isbn10"));
+            book.setTitle(rs.getString("title"));
+            book.setCover(rs.getString("cover"));
+            book.setPublisher(rs.getString("publisher"));
+            book.setPages(rs.getInt("pages"));
+            listOfBooks.add(book);
+        }
+
+        return listOfBooks;
+    }
+
+    private List<Borrower> mapResultSetToBorrower(ResultSet rs) throws SQLException{
+        ArrayList<Borrower> listOfBorrowers = new ArrayList<Borrower>();
+
+        while (rs.next()) {
+            Borrower borrower = new Borrower();
+            borrower.setCardId(rs.getInt("card_id"));
+            borrower.setSsn(rs.getString("ssn"));
+            borrower.setFirstName(rs.getString("first_name"));
+            borrower.setLastName(rs.getString("last_name"));
+            borrower.setEmail(rs.getString("email"));
+            borrower.setAddress(rs.getString("address"));
+            borrower.setCity(rs.getString("city"));
+            borrower.setState(rs.getString("state"));
+            borrower.setPhone(rs.getString("phone"));
+            listOfBorrowers.add(borrower);
+        }
+
+        return listOfBorrowers;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

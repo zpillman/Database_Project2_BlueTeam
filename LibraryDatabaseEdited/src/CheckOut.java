@@ -1,3 +1,12 @@
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,6 +18,14 @@
  * @author Warren
  */
 public class CheckOut extends javax.swing.JFrame {
+    
+    private final String url = "jdbc:postgresql://localhost:5434/postgres";
+    private final String user = "zpillman";
+    private final String password = "password";
+    
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
+    }
 
     /**
      * Creates new form CheckOut
@@ -74,9 +91,11 @@ public class CheckOut extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckOut_OkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOut_OkActionPerformed
-CheckOutResults cor = new CheckOutResults();
-cor.setVisible(true);
-dispose();
+        String userInput = CheckOut_TextBox.getText();
+        List<Book> bookList = searchBooksTerm(userInput);
+        CheckOutResults cor = new CheckOutResults(bookList);
+        cor.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckOut_OkActionPerformed
 
     /**
@@ -116,6 +135,47 @@ dispose();
                 new CheckOut().setVisible(true);
             }
         });
+    }
+    
+    public List<Book> searchBooksTerm(String term) {
+        //append wildcards to search term
+        term = "%" + term + "%";
+        String SQL = "SELECT DISTINCT Books.isbn10, Isbns.isbn13, Books.title, Authors.full_name "
+            + "FROM Books "
+            + "JOIN Isbns ON Isbns.isbn10 = Books.isbn10 "
+            + "JOIN BookAuthors ON Books.isbn10 = BookAuthors.isbn10 "
+            + "JOIN Authors ON BookAuthors.author_id = Authors.author_id "
+            + "WHERE (Authors.full_name ILIKE ? "
+            + "OR Books.isbn10 ILIKE ? "
+            + "OR Books.title ILIKE ? "
+            + "OR Isbns.isbn13 ILIKE ? ) "
+            + "AND NOT Books.is_checked_out";
+
+        List<Book> booksList = new ArrayList<Book>();
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, term);
+            pstmt.setString(2, term);
+            pstmt.setString(3, term);
+            pstmt.setString(4, term);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                Book book = new Book();
+                Author author = new Author();
+                book.setIsbn10(rs.getString("isbn10"));
+                book.setIsbn13(rs.getString("isbn13"));
+                book.setTitle(rs.getString("title"));
+                author.setFullName(rs.getString("full_name"));
+                book.setAuthor(author);
+                booksList.add(book);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return booksList;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
