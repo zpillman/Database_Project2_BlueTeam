@@ -111,8 +111,8 @@ public class CheckOutVerify extends javax.swing.JFrame {
         //make sure the borrower exists
         List<Borrower> foundBorrower = findBorrowerByID(cardId);
         if(foundBorrower.isEmpty()) {
-            //TODO throw actual error that user doesn't exist
             System.out.println("Error, User does not exist.");
+            return;
         }
 
         checkOutBook(cardId, isbn10);
@@ -142,9 +142,12 @@ public class CheckOutVerify extends javax.swing.JFrame {
 
     public void checkOutBook(int cardId, String isbn) {
         //first make sure the user hasn't checked out too many books
+        //count the number of records in BookLoans that have the users card_id
+        // AND where date_in is NULL (ie, haven't checked that book in yet)
         String getBookLoansForCardIdSQL = "SELECT COUNT(*) AS books_checked_out "
             + "FROM BookLoans "
-            + "WHERE BookLoans.card_id = ? ";
+            + "WHERE BookLoans.card_id = ? "
+            + "AND BookLoans.date_in IS NULL ";
 
         int booksCheckedOut = 0;
 
@@ -161,25 +164,17 @@ public class CheckOutVerify extends javax.swing.JFrame {
         if(booksCheckedOut > 3) {
             System.out.println("Error, That user has too many books checked out.");
             return;
-        } /*else {
-      System.out.println("The user is under the maximum checkout limit(3)!");
-    }*/
+        }
 
         //Ensure the book isn't checked out already
         List<Book> books = findBooksByIsbn(isbn);
-
-        for(Book book : books) {
-            System.out.println(book);
-        }
 
         Book bookFound = books.get(0);
 
         if(bookFound.isCheckedOut()) {
             System.out.println("Error, That book is already checked out.");
             return;
-        }/* else {
-      System.out.println("The book is available to checkout!");
-    }*/
+        }
 
         String insertBookLoan = "INSERT INTO BookLoans(card_id, isbn10) "
             + "VALUES(?, ?)";
