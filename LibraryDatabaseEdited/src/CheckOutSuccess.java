@@ -92,19 +92,19 @@ public class CheckOutSuccess extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckOutSuccess_FinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutSuccess_FinishActionPerformed
-System.exit(0);        // TODO add your handling code here:
+        System.exit(0);        // TODO add your handling code here:
     }//GEN-LAST:event_CheckOutSuccess_FinishActionPerformed
 
     private void CheckOutSuccess_COAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutSuccess_COAActionPerformed
-CheckOut co = new CheckOut();
-co.setVisible(true);
-dispose();
+        CheckOut co = new CheckOut();
+        co.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckOutSuccess_COAActionPerformed
 
     private void CheckOutSuccess_CIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutSuccess_CIActionPerformed
-CheckIn ci = new CheckIn();
-ci.setVisible(true);
-dispose();
+        CheckIn ci = new CheckIn();
+        ci.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckOutSuccess_CIActionPerformed
 
     /**

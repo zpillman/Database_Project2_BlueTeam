@@ -15,8 +15,10 @@ import java.util.regex.Pattern;
  * @author Warren
  */
 public class CheckOutResults extends javax.swing.JFrame {
-    
+
+    List<Book> bookList;
     ArrayList<String> bookListString = new ArrayList<>();
+    String[] strings;
     String isbn10;
     
     
@@ -24,9 +26,13 @@ public class CheckOutResults extends javax.swing.JFrame {
      * Creates new form CheckOutResults
      */
     public CheckOutResults(List<Book> listOfBooks) {
+        this.bookList = listOfBooks;
         for(Book b : listOfBooks) {
             bookListString.add(b.toString());
         }
+
+        strings = bookListString.toArray(new String[bookListString.size()]);
+
         initComponents();
     }
 
@@ -40,8 +46,8 @@ public class CheckOutResults extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jScrollPane1 = new javax.swing.JScrollPane();
         CheckOutResults_List = new javax.swing.JList();
+        jScrollPane1 = new javax.swing.JScrollPane();
         CheckOutButton = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
 
@@ -57,6 +63,8 @@ public class CheckOutResults extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+
+        CheckOutResults_List.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         CheckOutResults_List.setPreferredSize(new java.awt.Dimension(100, 100));
         jScrollPane1.setViewportView(CheckOutResults_List);
 
@@ -127,14 +135,22 @@ public class CheckOutResults extends javax.swing.JFrame {
             isbn10 = m.group(0);
             isbn10 = isbn10.substring(isbn10.lastIndexOf("=") + 1);
             isbn10 = isbn10.substring(isbn10.lastIndexOf("'") + 1);
-
         }
+
+        Book bookObject = new Book();
+
+        for(Book b : bookList) {
+            if(b.getIsbn10().equals(isbn10)) {
+                bookObject = b;
+            }
+        }
+
+        System.out.println(bookObject);
 
         System.out.println("parsed isbn10 = " + isbn10);
 
 
         CheckOutVerify cov = new CheckOutVerify(isbn10);
-        //System.out.println("USER SELECTED VALUE = " + userSelectedValue);
         cov.setVisible(true);
         dispose();
     }//GEN-LAST:event_CheckOutButtonActionPerformed

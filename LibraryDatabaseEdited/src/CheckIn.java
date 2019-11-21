@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -102,6 +103,14 @@ public class CheckIn extends javax.swing.JFrame {
 
         List<BookLoan> bookLoans = searchBookLoanByTerm(term);
 
+        if(bookLoans.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "Error, No BookLoans Found Matching " + userInput,
+                "No BookLoan Found",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         CheckInResults cir = new CheckInResults(bookLoans);
         cir.setVisible(true);
         dispose();
@@ -113,13 +122,15 @@ public class CheckIn extends javax.swing.JFrame {
 
     public List<BookLoan> searchBookLoanByTerm(String term) {
         term = "%" + term + "%";
-        String searchBookLoansByTerm = "SELECT BookLoans.loan_id, Borrowers.card_id, "
+        String searchBookLoansByTerm = "SELECT DISTINCT BookLoans.loan_id, BookLoans.date_out, "
+            + "BookLoans.due_date, Borrowers.card_id, "
             + "Borrowers.first_name, Borrowers.last_name, Books.isbn10 FROM BookLoans "
             + "JOIN Books ON Books.isbn10 = BookLoans.isbn10 "
             + "JOIN Borrowers ON Borrowers.card_id = BookLoans.card_id "
-            + "WHERE Borrowers.first_name ILIKE ? "
+            + "WHERE (Borrowers.first_name ILIKE ? "
             + "OR Borrowers.last_name ILIKE ? "
-            + "OR Books.isbn10 ILIKE ? ";
+            + "OR Books.isbn10 ILIKE ? )"
+            + "AND BookLoans.date_in IS NULL ";
 
         List<BookLoan> bookLoans = new ArrayList<>();
 
@@ -128,10 +139,13 @@ public class CheckIn extends javax.swing.JFrame {
             pstmt.setString(2, term);
             pstmt.setString(3, term);
 
+
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()) {
                 BookLoan bookLoan = new BookLoan();
+                bookLoan.setDateOut(rs.getDate("date_out"));
+                bookLoan.setDueDate(rs.getDate("due_date"));
                 bookLoan.setLoanId(rs.getInt("loan_id"));
                 bookLoan.setIsbn10(rs.getString("isbn10"));
                 bookLoan.setCardId(rs.getInt("card_id"));

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -93,6 +94,17 @@ public class CheckOut extends javax.swing.JFrame {
     private void CheckOut_OkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOut_OkActionPerformed
         String userInput = CheckOut_TextBox.getText();
         List<Book> bookList = searchBooksTerm(userInput);
+
+        //make error window
+        if(bookList.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "Error, no books found matching that term",
+                "No Books Found",
+                JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
+        }
+
         CheckOutResults cor = new CheckOutResults(bookList);
         cor.setVisible(true);
         dispose();

@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -111,7 +112,21 @@ public class CheckOutVerify extends javax.swing.JFrame {
         //make sure the borrower exists
         List<Borrower> foundBorrower = findBorrowerByID(cardId);
         if(foundBorrower.isEmpty()) {
-            System.out.println("Error, User does not exist.");
+            JOptionPane.showMessageDialog(null,
+                "Error, that user does not exist in the system.",
+                "User Not Found",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int booksCheckedOutForUser = getNumberOfCheckedOutBooks(cardId);
+
+        if(booksCheckedOutForUser >= 3) {
+            //make error window
+            JOptionPane.showMessageDialog(null,
+                "Error, that user already has too many books checked out.",
+                "Maximum Books Checked Out Reached",
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -141,40 +156,9 @@ public class CheckOutVerify extends javax.swing.JFrame {
     }
 
     public void checkOutBook(int cardId, String isbn) {
-        //first make sure the user hasn't checked out too many books
-        //count the number of records in BookLoans that have the users card_id
-        // AND where date_in is NULL (ie, haven't checked that book in yet)
-        String getBookLoansForCardIdSQL = "SELECT COUNT(*) AS books_checked_out "
-            + "FROM BookLoans "
-            + "WHERE BookLoans.card_id = ? "
-            + "AND BookLoans.date_in IS NULL ";
-
-        int booksCheckedOut = 0;
-
-        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getBookLoansForCardIdSQL)) {
-            pstmt.setInt(1, cardId);
-            ResultSet rs = pstmt.executeQuery();
-            while(rs.next()) {
-                booksCheckedOut = rs.getInt("books_checked_out");
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        if(booksCheckedOut > 3) {
-            System.out.println("Error, That user has too many books checked out.");
-            return;
-        }
-
-        //Ensure the book isn't checked out already
         List<Book> books = findBooksByIsbn(isbn);
 
         Book bookFound = books.get(0);
-
-        if(bookFound.isCheckedOut()) {
-            System.out.println("Error, That book is already checked out.");
-            return;
-        }
 
         String insertBookLoan = "INSERT INTO BookLoans(card_id, isbn10) "
             + "VALUES(?, ?)";
@@ -199,6 +183,29 @@ public class CheckOutVerify extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         }
 
+    }
+
+    public int getNumberOfCheckedOutBooks(int cardId) {
+        //count the number of records in BookLoans that have the users card_id
+        // AND where date_in is NULL (ie, haven't checked that book in yet)
+        String getBookLoansForCardIdSQL = "SELECT COUNT(*) AS books_checked_out "
+            + "FROM BookLoans "
+            + "WHERE BookLoans.card_id = ? "
+            + "AND BookLoans.date_in IS NULL ";
+
+        int booksCheckedOut = 0;
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getBookLoansForCardIdSQL)) {
+            pstmt.setInt(1, cardId);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                booksCheckedOut = rs.getInt("books_checked_out");
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return booksCheckedOut;
     }
 
     public List<Book> findBooksByIsbn(String isbn) {
