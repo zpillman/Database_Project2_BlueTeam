@@ -1,8 +1,6 @@
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,7 +16,7 @@ public class CheckOutResults extends javax.swing.JFrame {
 
     List<Book> bookList;
     ArrayList<String> bookListString = new ArrayList<>();
-    String[] strings;
+    Book[] books;
     String isbn10;
     
     
@@ -31,8 +29,7 @@ public class CheckOutResults extends javax.swing.JFrame {
             bookListString.add(b.toString());
         }
 
-        strings = bookListString.toArray(new String[bookListString.size()]);
-
+        books = bookList.toArray(new Book[bookList.size()]);
         initComponents();
     }
 
@@ -46,8 +43,8 @@ public class CheckOutResults extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        CheckOutResults_List = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
+        CheckOutResults_List = new javax.swing.JList(books);
         CheckOutButton = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
 
@@ -57,15 +54,8 @@ public class CheckOutResults extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(600, 600));
         setPreferredSize(new java.awt.Dimension(500, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
-
-        CheckOutResults_List.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = bookListString.toArray(new String[bookListString.size()]);
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-
-        CheckOutResults_List.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        CheckOutResults_List.setPreferredSize(new java.awt.Dimension(100, 100));
+        
+        CheckOutResults_List.setCellRenderer(new BookCellRenderer());
         jScrollPane1.setViewportView(CheckOutResults_List);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -122,33 +112,11 @@ public class CheckOutResults extends javax.swing.JFrame {
     }//GEN-LAST:event_BackButtonActionPerformed
 
     private void CheckOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutButtonActionPerformed
-        //do some super ugly string parsing
-        String userSelectedBook = (String)CheckOutResults_List.getSelectedValue();
+        Book userSelectedBook = (Book)CheckOutResults_List.getSelectedValue();
+        isbn10 = userSelectedBook.getIsbn10();
+
+        //TODO remove me
         System.out.println(userSelectedBook);
-
-        //regex this bitch
-        String pattern = "(isbn10=')\\w+";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(userSelectedBook);
-
-        if(m.find()) {
-            isbn10 = m.group(0);
-            isbn10 = isbn10.substring(isbn10.lastIndexOf("=") + 1);
-            isbn10 = isbn10.substring(isbn10.lastIndexOf("'") + 1);
-        }
-
-        Book bookObject = new Book();
-
-        for(Book b : bookList) {
-            if(b.getIsbn10().equals(isbn10)) {
-                bookObject = b;
-            }
-        }
-
-        System.out.println(bookObject);
-
-        System.out.println("parsed isbn10 = " + isbn10);
-
 
         CheckOutVerify cov = new CheckOutVerify(isbn10);
         cov.setVisible(true);

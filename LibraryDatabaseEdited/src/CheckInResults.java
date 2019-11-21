@@ -1,16 +1,9 @@
-
-import static java.awt.SystemColor.window;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.JFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,16 +24,13 @@ public class CheckInResults extends javax.swing.JFrame {
     String isbn10;
     int loan_id;
 
-    ArrayList<String> bookLoansStrings = new ArrayList<>();
+    BookLoan[] bookLoans;
 
     /**
      * Creates new form CheckInResults
      */
     public CheckInResults(List<BookLoan> bookLoans) {
-        for(BookLoan b : bookLoans) {
-            bookLoansStrings.add(b.toString());
-        }
-
+        this.bookLoans = bookLoans.toArray(new BookLoan[bookLoans.size()]);
         initComponents();
     }
 
@@ -59,9 +49,10 @@ public class CheckInResults extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        CheckInResults_List = new javax.swing.JList();
+        CheckInResults_List = new javax.swing.JList(bookLoans);
         CheckInResults_CI = new javax.swing.JButton();
         CheckInResults_Back = new javax.swing.JButton();
+        jScrollBar2 = new javax.swing.JScrollBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Check In Results");
@@ -70,11 +61,7 @@ public class CheckInResults extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(500, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        CheckInResults_List.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = bookLoansStrings.toArray(new String[bookLoansStrings.size()]);
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        CheckInResults_List.setCellRenderer(new BookLoanCellRenderer());
         jScrollPane1.setViewportView(CheckInResults_List);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -123,6 +110,7 @@ public class CheckInResults extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(18, 178, 18, 0);
         getContentPane().add(CheckInResults_Back, gridBagConstraints);
+        getContentPane().add(jScrollBar2, new java.awt.GridBagConstraints());
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -136,38 +124,12 @@ public class CheckInResults extends javax.swing.JFrame {
 
     private void CheckInResults_CIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInResults_CIActionPerformed
         //get the user selected option from the list
-        String userSelectedOption = (String)CheckInResults_List.getSelectedValue();
+        BookLoan userSelectedOption = (BookLoan) CheckInResults_List.getSelectedValue();
 
-        //dirty string processing for the isbn number
-        //regex this bitch
-        String pattern = "(isbn10=')\\w+";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(userSelectedOption);
-
-        if(m.find()) {
-            isbn10 = m.group(0);
-            isbn10 = isbn10.substring(isbn10.lastIndexOf("=") + 1);
-            isbn10 = isbn10.substring(isbn10.lastIndexOf("'") + 1);
-        }
-
-        //dirty string processing for loan_id
-        pattern = "(loanId=)\\w+";
-        r = Pattern.compile(pattern);
-        m = r.matcher(userSelectedOption);
-
-        String tempLoanIdString;
-        if(m.find()) {
-            tempLoanIdString = m.group(0);
-            tempLoanIdString = tempLoanIdString.substring(tempLoanIdString.lastIndexOf("=") + 1);
-            loan_id = Integer.parseInt(tempLoanIdString);
-        }
-
-        System.out.println("isbn10 = " + isbn10);
-        System.out.println("loan_id = " + loan_id);
-
-        checkInBook(loan_id, isbn10);
-
+        //TODO remove me
         System.out.println(userSelectedOption);
+
+        checkInBook(userSelectedOption.getLoanId(), userSelectedOption.getIsbn10());
 
         CheckInSuccess cis = new CheckInSuccess();
         cis.setVisible(true);
@@ -212,6 +174,7 @@ public class CheckInResults extends javax.swing.JFrame {
     private javax.swing.JButton CheckInResults_Back;
     private javax.swing.JButton CheckInResults_CI;
     private javax.swing.JList CheckInResults_List;
+    private javax.swing.JScrollBar jScrollBar2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
