@@ -129,7 +129,7 @@ public class CheckInResults extends javax.swing.JFrame {
         //TODO remove me
         System.out.println(userSelectedOption);
 
-        checkInBook(userSelectedOption.getLoanId(), userSelectedOption.getIsbn10());
+        checkInBook(userSelectedOption.getLoanId(), userSelectedOption.getIsbn());
 
         CheckInSuccess cis = new CheckInSuccess();
         cis.setVisible(true);
@@ -137,9 +137,9 @@ public class CheckInResults extends javax.swing.JFrame {
     }//GEN-LAST:event_CheckInResults_CIActionPerformed
 
     public void checkInBook(int loan_id, String isbn10) {
-        String updateBookLoansDateInSQL = "UPDATE BookLoans "
+        String updateBookLoansDateInSQL = "UPDATE Book_Loans "
             + "SET date_in = CURRENT_DATE "
-            + "WHERE BookLoans.loan_id = ?";
+            + "WHERE Book_Loans.loan_id = ?";
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBookLoansDateInSQL)) {
             pstmt.setInt(1, loan_id);
@@ -153,8 +153,8 @@ public class CheckInResults extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         }
 
-        String updateBooksIsCheckedOutSQL = "UPDATE Books SET is_checked_out = false "
-            + "WHERE Books.isbn10 = ?";
+        String updateBooksIsCheckedOutSQL = "UPDATE Book SET is_checked_out = false "
+            + "WHERE Book.isbn = ?";
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBooksIsCheckedOutSQL)) {
             pstmt.setString(1, isbn10);

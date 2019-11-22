@@ -113,7 +113,7 @@ public class CheckOutResults extends javax.swing.JFrame {
 
     private void CheckOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutButtonActionPerformed
         Book userSelectedBook = (Book)CheckOutResults_List.getSelectedValue();
-        isbn10 = userSelectedBook.getIsbn10();
+        isbn10 = userSelectedBook.getIsbn();
 
         //TODO remove me
         System.out.println(userSelectedBook);

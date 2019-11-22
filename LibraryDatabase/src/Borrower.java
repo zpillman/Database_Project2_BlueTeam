@@ -1,8 +1,8 @@
 public class Borrower {
   private int cardId;
   private String ssn;
-  private String firstName;
-  private String lastName;
+  private String bname;
+  private String bnameLast;
   private String email;
   private String address;
   private String city;
@@ -12,12 +12,12 @@ public class Borrower {
   public Borrower() {
   }
 
-  public Borrower(int cardId, String ssn, String firstName, String lastName, String email,
+  public Borrower(int cardId, String ssn, String bname, String bnameLast, String email,
       String address, String city, String state, String phone) {
     this.cardId = cardId;
     this.ssn = ssn;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.bname = bname;
+    this.bnameLast = bnameLast;
     this.email = email;
     this.address = address;
     this.city = city;
@@ -41,20 +41,20 @@ public class Borrower {
     this.ssn = ssn;
   }
 
-  public String getFirstName() {
-    return firstName;
+  public String getBname() {
+    return bname;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
+  public void setBname(String bname) {
+    this.bname = bname;
   }
 
-  public String getLastName() {
-    return lastName;
+  public String getBnameLast() {
+    return bnameLast;
   }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
+  public void setBnameLast(String bnameLast) {
+    this.bnameLast = bnameLast;
   }
 
   public String getEmail() {
@@ -102,8 +102,8 @@ public class Borrower {
     return "Borrower{" +
         "cardId=" + cardId +
         ", ssn='" + ssn + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
+        ", bname='" + bname + '\'' +
+        ", bnameLast='" + bnameLast + '\'' +
         ", email='" + email + '\'' +
         ", address='" + address + '\'' +
         ", city='" + city + '\'' +

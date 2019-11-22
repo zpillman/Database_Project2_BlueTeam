@@ -122,15 +122,15 @@ public class CheckIn extends javax.swing.JFrame {
 
     public List<BookLoan> searchBookLoanByTerm(String term) {
         term = "%" + term + "%";
-        String searchBookLoansByTerm = "SELECT DISTINCT BookLoans.loan_id, BookLoans.date_out, "
-            + "BookLoans.due_date, Borrowers.card_id, "
-            + "Borrowers.first_name, Borrowers.last_name, Books.isbn10 FROM BookLoans "
-            + "JOIN Books ON Books.isbn10 = BookLoans.isbn10 "
-            + "JOIN Borrowers ON Borrowers.card_id = BookLoans.card_id "
-            + "WHERE (Borrowers.first_name ILIKE ? "
-            + "OR Borrowers.last_name ILIKE ? "
-            + "OR Books.isbn10 ILIKE ? )"
-            + "AND BookLoans.date_in IS NULL ";
+        String searchBookLoansByTerm = "SELECT DISTINCT Book_Loans.loan_id, Book_Loans.date_out, "
+            + "Book_Loans.due_date, Borrower.card_id, "
+            + "Borrower.bname, Borrowers.bname_last, Book.isbn FROM Book_Loans "
+            + "JOIN Book ON Book.isbn = Book_Loans.isbn "
+            + "JOIN Borrower ON Borrower.card_id = Book_Loans.card_id "
+            + "WHERE (Borrower.bname ILIKE ? "
+            + "OR Borrower.bname_last ILIKE ? "
+            + "OR Book.isbn ILIKE ? )"
+            + "AND Book_Loans.date_in IS NULL ";
 
         List<BookLoan> bookLoans = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class CheckIn extends javax.swing.JFrame {
                 bookLoan.setDateOut(rs.getDate("date_out"));
                 bookLoan.setDueDate(rs.getDate("due_date"));
                 bookLoan.setLoanId(rs.getInt("loan_id"));
-                bookLoan.setIsbn10(rs.getString("isbn10"));
+                bookLoan.setIsbn(rs.getString("isbn"));
                 bookLoan.setCardId(rs.getInt("card_id"));
                 bookLoans.add(bookLoan);
             }

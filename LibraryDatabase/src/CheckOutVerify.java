@@ -139,7 +139,7 @@ public class CheckOutVerify extends javax.swing.JFrame {
 
     public List<Borrower> findBorrowerByID(int cardID) {
         String SQL = "SELECT * "
-            + "FROM Borrowers "
+            + "FROM Borrower "
             + "WHERE card_id = ?";
 
         List<Borrower> borrowersList = null;
@@ -160,23 +160,23 @@ public class CheckOutVerify extends javax.swing.JFrame {
 
         Book bookFound = books.get(0);
 
-        String insertBookLoan = "INSERT INTO BookLoans(card_id, isbn10) "
+        String insertBookLoan = "INSERT INTO Book_Loans(card_id, isbn) "
             + "VALUES(?, ?)";
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(insertBookLoan)) {
             pstmt.setInt(1, cardId);
-            pstmt.setString(2 ,bookFound.getIsbn10());
+            pstmt.setString(2 ,bookFound.getIsbn());
             ResultSet rs = pstmt.executeQuery();
             //TODO Ensure the record was properly inserted.
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
 
-        String updateBookIsCheckedOut = "UPDATE Books SET is_checked_out = TRUE "
-            + "WHERE Books.isbn10 = ? ";
+        String updateBookIsCheckedOut = "UPDATE Book SET is_checked_out = TRUE "
+            + "WHERE Book.isbn = ? ";
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateBookIsCheckedOut)) {
-            pstmt.setString(1 , bookFound.getIsbn10());
+            pstmt.setString(1 , bookFound.getIsbn());
             ResultSet rs = pstmt.executeQuery();
             //TODO Ensure the update went through.
         } catch (SQLException ex) {
@@ -189,9 +189,9 @@ public class CheckOutVerify extends javax.swing.JFrame {
         //count the number of records in BookLoans that have the users card_id
         // AND where date_in is NULL (ie, haven't checked that book in yet)
         String getBookLoansForCardIdSQL = "SELECT COUNT(*) AS books_checked_out "
-            + "FROM BookLoans "
-            + "WHERE BookLoans.card_id = ? "
-            + "AND BookLoans.date_in IS NULL ";
+            + "FROM Book_Loans "
+            + "WHERE Book_Loans.card_id = ? "
+            + "AND Book_Loans.date_in IS NULL ";
 
         int booksCheckedOut = 0;
 
@@ -209,11 +209,11 @@ public class CheckOutVerify extends javax.swing.JFrame {
     }
 
     public List<Book> findBooksByIsbn(String isbn) {
-        String SQL = "SELECT Books.isbn10, Books.title, Books.cover, Books.publisher, Books.pages, "
-            + "Books.is_checked_out "
-            + "FROM Books "
-            + "JOIN Isbns ON Isbns.isbn10 = Books.isbn10 "
-            + "WHERE Books.isbn10 = ? "
+        String SQL = "SELECT Book.isbn, Book.title, Book.cover, Book.publisher, Book.pages, "
+            + "Book.is_checked_out "
+            + "FROM Book "
+            + "JOIN Isbns ON Isbns.isbn = Book.isbn "
+            + "WHERE Book.isbn = ? "
             + "OR Isbns.isbn13 = ?";
 
         List<Book> booksList = new ArrayList<>();
@@ -238,7 +238,7 @@ public class CheckOutVerify extends javax.swing.JFrame {
 
         while (rs.next()) {
             Book book = new Book();
-            book.setIsbn10(rs.getString("isbn10"));
+            book.setIsbn(rs.getString("isbn"));
             book.setTitle(rs.getString("title"));
             book.setCover(rs.getString("cover"));
             book.setPublisher(rs.getString("publisher"));
@@ -256,8 +256,8 @@ public class CheckOutVerify extends javax.swing.JFrame {
             Borrower borrower = new Borrower();
             borrower.setCardId(rs.getInt("card_id"));
             borrower.setSsn(rs.getString("ssn"));
-            borrower.setFirstName(rs.getString("first_name"));
-            borrower.setLastName(rs.getString("last_name"));
+            borrower.setBname(rs.getString("bname"));
+            borrower.setBnameLast(rs.getString("bname_last"));
             borrower.setEmail(rs.getString("email"));
             borrower.setAddress(rs.getString("address"));
             borrower.setCity(rs.getString("city"));

@@ -1,13 +1,13 @@
 public class Author {
   private int authorId;
-  private String fullName;
+  private String[] names;
 
   public Author() {
   }
 
-  public Author(int authorId, String fullName) {
+  public Author(int authorId, String[] names) {
     this.authorId = authorId;
-    this.fullName = fullName;
+    this.names = names;
   }
 
   public int getAuthorId() {
@@ -18,18 +18,18 @@ public class Author {
     this.authorId = authorId;
   }
 
-  public String getFullName() {
-    return fullName;
+  public String[] getNames() {
+    return names;
   }
 
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
+  public void setNames(String[] names) {
+    this.names = names;
   }
 
   @Override
   public String toString() {
     return "Author{" +
-        "fullName='" + fullName + '\''
+        "names='" + names + '\''
         + '}';
   }
 }

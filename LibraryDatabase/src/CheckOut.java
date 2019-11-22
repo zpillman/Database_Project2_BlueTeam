@@ -1,4 +1,5 @@
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -152,16 +153,16 @@ public class CheckOut extends javax.swing.JFrame {
     public List<Book> searchBooksTerm(String term) {
         //append wildcards to search term
         term = "%" + term + "%";
-        String SQL = "SELECT DISTINCT Books.isbn10, Isbns.isbn13, Books.title, Authors.full_name "
-            + "FROM Books "
-            + "JOIN Isbns ON Isbns.isbn10 = Books.isbn10 "
-            + "JOIN BookAuthors ON Books.isbn10 = BookAuthors.isbn10 "
-            + "JOIN Authors ON BookAuthors.author_id = Authors.author_id "
-            + "WHERE (Authors.full_name ILIKE ? "
-            + "OR Books.isbn10 ILIKE ? "
-            + "OR Books.title ILIKE ? "
+        String SQL = "SELECT DISTINCT Book.isbn, Isbns.isbn13, Book.title, Authors.name "
+            + "FROM Book "
+            + "JOIN Isbns ON Isbns.isbn = Book.isbn "
+            + "JOIN Book_Authors ON Book.isbn = Book_Authors.isbn "
+            + "JOIN Authors ON Book_Authors.author_id = Authors.author_id "
+            + "WHERE (? ILIKE ANY(Authors.name) "
+            + "OR Book.isbn ILIKE ? "
+            + "OR Book.title ILIKE ? "
             + "OR Isbns.isbn13 ILIKE ? ) "
-            + "AND NOT Books.is_checked_out";
+            + "AND NOT Book.is_checked_out";
 
         List<Book> booksList = new ArrayList<Book>();
 
@@ -176,10 +177,14 @@ public class CheckOut extends javax.swing.JFrame {
             while(rs.next()) {
                 Book book = new Book();
                 Author author = new Author();
-                book.setIsbn10(rs.getString("isbn10"));
+                book.setIsbn(rs.getString("isbn"));
                 book.setIsbn13(rs.getString("isbn13"));
                 book.setTitle(rs.getString("title"));
-                author.setFullName(rs.getString("full_name"));
+
+                Array nameArray = rs.getArray("name");
+                String[] name = (String[])nameArray.getArray();
+                author.setNames(name);
+
                 book.setAuthor(author);
                 booksList.add(book);
             }

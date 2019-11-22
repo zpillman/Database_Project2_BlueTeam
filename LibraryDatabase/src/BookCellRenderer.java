@@ -17,9 +17,11 @@ class BookCellRenderer extends JLabel implements ListCellRenderer {
     Book book = (Book) value;
 
     Author author = book.getAuthor();
+    String[] authorNameArray = author.getNames();
+    String commaDelimitedAuthorList = String.join(", ", authorNameArray);
 
-    String displayString = "Isbn10: " + book.getIsbn10() + "   Title: " + book.getTitle() +
-        "    Authors: " + author.getFullName() + "    Is Available: " + !book.isCheckedOut();
+    String displayString = "Isbn: " + book.getIsbn() + "   Title: " + book.getTitle() +
+        "    Authors: " + commaDelimitedAuthorList + "    Is Available: " + !book.isCheckedOut();
 
     setText(displayString);
     if (isSelected) {

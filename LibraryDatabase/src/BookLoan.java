@@ -6,19 +6,19 @@ public class BookLoan {
   private Date dateIn;
   private int cardId;
   private int loanId;
-  private String isbn10;
+  private String isbn;
 
   public BookLoan() {
   }
 
   public BookLoan(Date dateOut, Date dueDate, Date dateIn, int cardId, int loanId,
-      String isbn10) {
+      String isbn) {
     this.dateOut = dateOut;
     this.dueDate = dueDate;
     this.dateIn = dateIn;
     this.cardId = cardId;
     this.loanId = loanId;
-    this.isbn10 = isbn10;
+    this.isbn = isbn;
   }
 
   public Date getDateOut() {
@@ -61,12 +61,12 @@ public class BookLoan {
     this.loanId = loanId;
   }
 
-  public String getIsbn10() {
-    return isbn10;
+  public String getIsbn() {
+    return isbn;
   }
 
-  public void setIsbn10(String isbn10) {
-    this.isbn10 = isbn10;
+  public void setIsbn(String isbn) {
+    this.isbn = isbn;
   }
 
   @Override
@@ -77,7 +77,7 @@ public class BookLoan {
         ", dateIn=" + dateIn +
         ", cardId=" + cardId +
         ", loanId=" + loanId +
-        ", isbn10='" + isbn10 + '\'' +
+        ", isbn='" + isbn + '\'' +
         '}';
   }
 }

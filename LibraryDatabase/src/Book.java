@@ -1,5 +1,5 @@
 public class Book {
-  private String isbn10;
+  private String isbn;
   private String isbn13;
   private String title;
   private Author author;
@@ -11,9 +11,9 @@ public class Book {
   public Book() {
   }
 
-  public Book(String isbn10, String isbn13, String title, Author author, String cover,
+  public Book(String isbn, String isbn13, String title, Author author, String cover,
       String publisher, int pages, boolean isCheckedOut) {
-    this.isbn10 = isbn10;
+    this.isbn = isbn;
     this.isbn13 = isbn13;
     this.title = title;
     this.author = author;
@@ -23,12 +23,12 @@ public class Book {
     this.isCheckedOut = isCheckedOut;
   }
 
-  public String getIsbn10() {
-    return isbn10;
+  public String getIsbn() {
+    return isbn;
   }
 
-  public void setIsbn10(String isbn10) {
-    this.isbn10 = isbn10;
+  public void setIsbn(String isbn) {
+    this.isbn = isbn;
   }
 
   public String getIsbn13() {
@@ -90,7 +90,7 @@ public class Book {
   @Override
   public String toString() {
     return "Book{" +
-        "isbn10='" + isbn10 + '\'' +
+        "isbn='" + isbn + '\'' +
         ", isbn13='" + isbn13 + '\'' +
         ", title='" + title + '\'' +
         ", author=" + author +
