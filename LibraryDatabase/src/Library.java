@@ -42,6 +42,7 @@ public class Library extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         Library_CI = new javax.swing.JButton();
         Library_CO = new javax.swing.JButton();
+        Library_NewUser = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Library");
@@ -53,8 +54,9 @@ public class Library extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(68, 118, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(71, 118, 0, 0);
         getContentPane().add(jLabel1, gridBagConstraints);
 
         Library_CI.setText("Check In");
@@ -66,11 +68,10 @@ public class Library extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipadx = 5;
         gridBagConstraints.ipady = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(55, 91, 614, 0);
+        gridBagConstraints.insets = new java.awt.Insets(55, 112, 0, 0);
         getContentPane().add(Library_CI, gridBagConstraints);
 
         Library_CO.setText("Check Out");
@@ -80,12 +81,25 @@ public class Library extends javax.swing.JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.ipady = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(55, 122, 0, 86);
+        gridBagConstraints.insets = new java.awt.Insets(55, 122, 0, 107);
         getContentPane().add(Library_CO, gridBagConstraints);
+
+        Library_NewUser.setText("New User");
+        Library_NewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Library_NewUserActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(117, 186, 477, 0);
+        getContentPane().add(Library_NewUser, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -99,6 +113,12 @@ ci.setVisible(true);
 CheckOut co = new CheckOut();
 co.setVisible(true);
     }//GEN-LAST:event_Library_COActionPerformed
+
+    private void Library_NewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Library_NewUserActionPerformed
+NewUser nu = new NewUser();
+nu.setVisible(true);
+dispose();// TODO add your handling code here:
+    }//GEN-LAST:event_Library_NewUserActionPerformed
 
     /**
      * @param args the command line arguments
@@ -138,6 +158,7 @@ co.setVisible(true);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Library_CI;
     private javax.swing.JButton Library_CO;
+    private javax.swing.JButton Library_NewUser;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

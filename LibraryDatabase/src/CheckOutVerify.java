@@ -94,6 +94,11 @@ public class CheckOutVerify extends javax.swing.JFrame {
         getContentPane().add(CheckOutVerify_Continue, gridBagConstraints);
 
         CheckOutVerify_NewUser.setText("New User");
+        CheckOutVerify_NewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CheckOutVerify_NewUserActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -136,6 +141,12 @@ public class CheckOutVerify extends javax.swing.JFrame {
         cos.setVisible(true);
         dispose();
     }//GEN-LAST:event_CheckOutVerify_ContinueActionPerformed
+
+    private void CheckOutVerify_NewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutVerify_NewUserActionPerformed
+NewUser nu = new NewUser();
+nu.setVisible(true);
+dispose();
+    }//GEN-LAST:event_CheckOutVerify_NewUserActionPerformed
 
     public List<Borrower> findBorrowerByID(int cardID) {
         String SQL = "SELECT * "
