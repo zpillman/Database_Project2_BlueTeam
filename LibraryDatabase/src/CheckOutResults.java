@@ -44,7 +44,7 @@ public class CheckOutResults extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        CheckOutResults_List = new javax.swing.JList(Books);
+        CheckOutResults_List = new javax.swing.JList(books);
         CheckOutButton = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
 
@@ -55,11 +55,12 @@ public class CheckOutResults extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(500, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        CheckOutResults_List.setCellRenderer(new BookCellRenderer());
+        //jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants
+            //.VERTICAL_SCROLLBAR_ALWAYS);
 
-        CheckOutResults_List.setCellRender(new BookCellRenderer());
-        CheckOutResults_List.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        CheckOutResults_List.setPreferredSize(new java.awt.Dimension(100, 100));
+        //CheckOutResults_List.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        //CheckOutResults_List.setPreferredSize(new java.awt.Dimension(100, 100));
         jScrollPane1.setViewportView(CheckOutResults_List);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
