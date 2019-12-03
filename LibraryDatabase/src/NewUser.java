@@ -4,11 +4,24 @@
  * and open the template in the editor.
  */
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Warren
  */
 public class NewUser extends javax.swing.JFrame {
+
+    private final String url = "jdbc:postgresql://localhost:5434/postgres";
+    private final String user = "zpillman";
+    private final String password = "password";
 
     /**
      * Creates new form NewUser
@@ -16,6 +29,11 @@ public class NewUser extends javax.swing.JFrame {
     public NewUser() {
         initComponents();
     }
+
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,6 +60,8 @@ public class NewUser extends javax.swing.JFrame {
         NewUser_PhoneNumber = new javax.swing.JTextField();
         NewUser_OK = new javax.swing.JButton();
         NewUser_Cancel = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        NewUser_Email = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,6 +88,11 @@ public class NewUser extends javax.swing.JFrame {
 
         NewUser_OK.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         NewUser_OK.setText("OK");
+        NewUser_OK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewUser_OKActionPerformed(evt);
+            }
+        });
 
         NewUser_Cancel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         NewUser_Cancel.setText("Cancel");
@@ -77,82 +102,97 @@ public class NewUser extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setText("Email");
+
+        NewUser_Email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewUser_EmailActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(NewUser_PhoneNumber)
-                    .addComponent(NewUser_Address)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel5)
-                        .addGap(131, 131, 131))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(NewUser_City, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24)
-                        .addComponent(NewUser_State))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel1)
-                                .addComponent(NewUser_SSN, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(NewUser_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jlabel2))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel2)
-                                        .addComponent(NewUser_LastName))))
-                            .addComponent(jLabel3)
-                            .addComponent(jlabel6))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(NewUser_Cancel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(NewUser_OK)))
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(NewUser_Email)
+                        .addComponent(NewUser_PhoneNumber)
+                        .addComponent(NewUser_Address)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5)
+                            .addGap(131, 131, 131))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(NewUser_City, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(24, 24, 24)
+                            .addComponent(NewUser_State))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(NewUser_Cancel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(NewUser_OK))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel1)
+                                    .addComponent(NewUser_SSN, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(NewUser_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jlabel2))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2)
+                                            .addComponent(NewUser_LastName))))
+                                .addComponent(jLabel3)
+                                .addComponent(jlabel6)
+                                .addComponent(jLabel6))
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(NewUser_SSN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jlabel2)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(NewUser_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(NewUser_LastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(NewUser_Address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(NewUser_City, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(NewUser_State, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jlabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(NewUser_PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(NewUser_OK)
-                    .addComponent(NewUser_Cancel))
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel1)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(NewUser_SSN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jlabel2)
+                        .addComponent(jLabel2))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(NewUser_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(NewUser_LastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(NewUser_Address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(NewUser_City, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(NewUser_State, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jlabel6)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(NewUser_PhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel6)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(NewUser_Email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(NewUser_OK)
+                        .addComponent(NewUser_Cancel))
+                    .addContainerGap())
         );
 
         pack();
@@ -164,6 +204,53 @@ public class NewUser extends javax.swing.JFrame {
         dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_NewUser_CancelActionPerformed
 
+    private void NewUser_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewUser_OKActionPerformed
+        //first check for an existing user
+        List<Borrower> borrowerList = findBorrowerBySsn(NewUser_SSN.getText());
+
+        if(!borrowerList.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                "Error, there already exists a user with that ssn",
+                "Duplicate SSN",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        //map user entered values into Borrower Object
+        Borrower newUser = new Borrower();
+        newUser.setSsn(NewUser_SSN.getText());
+        newUser.setBname(NewUser_FirstName.getText());
+        newUser.setBnameLast(NewUser_LastName.getText());
+        newUser.setEmail(NewUser_Email.getText());
+        newUser.setAddress(NewUser_Address.getText());
+        newUser.setCity(NewUser_City.getText());
+        newUser.setState(NewUser_State.getText());
+        newUser.setPhone(NewUser_PhoneNumber.getText());
+
+        try{
+            createNewUser(newUser);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                "Error creating user",
+                "Error creating user",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(null,
+            "User was created Successfully",
+            "User Created",
+            JOptionPane.INFORMATION_MESSAGE);
+
+        Library lib = new Library();
+        lib.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_NewUser_OKActionPerformed
+
+    private void NewUser_EmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewUser_EmailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NewUser_EmailActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -171,7 +258,7 @@ public class NewUser extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -199,10 +286,70 @@ public class NewUser extends javax.swing.JFrame {
         });
     }
 
+    public List<Borrower> findBorrowerBySsn(String ssn) {
+        String SQL = "SELECT * "
+            + "FROM Borrower "
+            + "WHERE ssn = ?";
+
+        List<Borrower> borrowersList = null;
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, ssn);
+            ResultSet rs = pstmt.executeQuery();
+            borrowersList = mapResultSetToBorrower(rs);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return borrowersList;
+    }
+
+    private List<Borrower> mapResultSetToBorrower(ResultSet rs) throws SQLException{
+        ArrayList<Borrower> listOfBorrowers = new ArrayList<Borrower>();
+
+        while (rs.next()) {
+            Borrower borrower = new Borrower();
+            borrower.setCardId(rs.getInt("card_id"));
+            borrower.setSsn(rs.getString("ssn"));
+            borrower.setBname(rs.getString("bname"));
+            borrower.setBnameLast(rs.getString("bname_last"));
+            borrower.setEmail(rs.getString("email"));
+            borrower.setAddress(rs.getString("address"));
+            borrower.setCity(rs.getString("city"));
+            borrower.setState(rs.getString("state"));
+            borrower.setPhone(rs.getString("phone"));
+            listOfBorrowers.add(borrower);
+        }
+
+        return listOfBorrowers;
+    }
+
+    private void createNewUser(Borrower borrower) {
+        String sql = "INSERT INTO "
+            + "Borrower(ssn, Bname, Bname_last, email, address, city, state, phone) "
+            + "VALUES(?, ?, ?, ?, ?, ?, ?, ?) ";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, borrower.getSsn());
+            pstmt.setString(2, borrower.getBname());
+            pstmt.setString(3, borrower.getBnameLast());
+            pstmt.setString(4, borrower.getEmail());
+            pstmt.setString(5, borrower.getAddress());
+            pstmt.setString(6, borrower.getCity());
+            pstmt.setString(7, borrower.getState());
+            pstmt.setString(8, borrower.getPhone());
+            ResultSet rs = pstmt.executeQuery();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField NewUser_Address;
     private javax.swing.JButton NewUser_Cancel;
     private javax.swing.JTextField NewUser_City;
+    private javax.swing.JTextField NewUser_Email;
     private javax.swing.JTextField NewUser_FirstName;
     private javax.swing.JTextField NewUser_LastName;
     private javax.swing.JButton NewUser_OK;
@@ -214,6 +361,7 @@ public class NewUser extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jlabel2;
     private javax.swing.JLabel jlabel6;
     // End of variables declaration//GEN-END:variables

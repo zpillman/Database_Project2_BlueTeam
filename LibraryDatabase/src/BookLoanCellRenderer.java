@@ -18,7 +18,7 @@ class BookLoanCellRenderer extends JLabel implements ListCellRenderer {
 
     String displayString = "Loan Id: " + bookLoan.getLoanId()
         + "     Card Id: " + bookLoan.getCardId()
-        + "     Isbn10: " + bookLoan.getIsbn10()
+        + "     Isbn10: " + bookLoan.getIsbn()
         + "     Date Out: " + bookLoan.getDateOut()
         + "     Due Date: " + bookLoan.getDueDate();
 
