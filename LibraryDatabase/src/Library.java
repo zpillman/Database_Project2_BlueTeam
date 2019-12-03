@@ -160,11 +160,12 @@ public class Library extends javax.swing.JFrame {
 
     List<Fine> finesList = new ArrayList<>();
 
-    String getListOfUnpaidFines = "SELECT Bname, Bname_last, isbn, "
-        + "fines.loan_id, date_out, due_date, fine_amt, is_paid FROM fines "
-        + " JOIN Book_Loans ON fines.loan_id = Book_Loans.loan_id "
+    String getListOfUnpaidFines = "SELECT Bname, bname_last, Borrower.card_id,"
+        + " SUM(Fines.fine_amt) AS total_amt, is_paid FROM fines "
+        + "JOIN Book_Loans ON fines.loan_id = Book_Loans.loan_id "
         + "JOIN Borrower ON Book_Loans.card_id = Borrower.card_id "
-        + "WHERE NOT is_paid";
+        + "WHERE NOT fines.is_paid "
+        + "GROUP BY Borrower.card_id, Borrower.Bname, Borrower.bname_last, is_paid;";
 
     try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getListOfUnpaidFines)) {
       ResultSet rs = pstmt.executeQuery();
@@ -174,19 +175,20 @@ public class Library extends javax.swing.JFrame {
         BookLoan bookLoan = new BookLoan();
         Borrower borrower = new Borrower();
 
-        fine.setLoanId(rs.getInt("loan_id"));
-        fine.setFineAmt(rs.getDouble("fine_amt"));
+        //fine.setLoanId(rs.getInt("loan_id"));
+        fine.setFineAmt(rs.getDouble("total_amt"));
         fine.setPaid(false);
 
         borrower.setBname(rs.getString("Bname"));
         borrower.setBnameLast(rs.getString("Bname_last"));
+        borrower.setCardId(rs.getInt("card_id"));
 
-        bookLoan.setLoanId(rs.getInt("loan_id"));
+        /*bookLoan.setLoanId(rs.getInt("loan_id"));
         bookLoan.setIsbn(rs.getString("isbn"));
         bookLoan.setDateOut(rs.getDate("date_out"));
-        bookLoan.setDueDate(rs.getDate("due_date"));
+        bookLoan.setDueDate(rs.getDate("due_date"));*/
 
-        fine.setBookLoan(bookLoan);
+        //fine.setBookLoan(bookLoan);
         fine.setBorrower(borrower);
 
         finesList.add(fine);
@@ -195,9 +197,6 @@ public class Library extends javax.swing.JFrame {
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
-
-
-
 
     Fines f = new Fines(finesList);
     f.setVisible(true);

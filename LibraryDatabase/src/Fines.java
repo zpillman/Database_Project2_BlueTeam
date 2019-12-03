@@ -93,13 +93,14 @@ public class Fines extends javax.swing.JFrame {
 
         //check if the book is checked in
         String checkIfCheckedInQuery = "SELECT * FROM Book_Loans "
-            + "WHERE loan_id = ? "
-            + "AND date_in IS NOT NULL";
+            + "WHERE card_id = ? "
+            + "AND date_in IS NULL";
 
         BookLoan bookLoan = null;
+        Borrower borrower = userSelectedFine.getBorrower();
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(checkIfCheckedInQuery)) {
-            pstmt.setInt(1, userSelectedFine.getLoanId());
+            pstmt.setInt(1, borrower.getCardId());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -116,20 +117,26 @@ public class Fines extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         }
 
-        if(bookLoan == null) {
+        if(bookLoan != null) {
             JOptionPane.showMessageDialog(null,
-                "Error, that book must be Checked-In before the fine can be paid",
-                "Book Not Checked In",
+                "Error, one or more of the books must be Checked-In before the fine can be paid",
+                "Book(s) Not Checked In",
                 JOptionPane.ERROR_MESSAGE);
+
+            CheckIn checkIn = new CheckIn();
+            checkIn.setVisible(true);
+            dispose();
             return;
         }
 
         //mark the fine as paid
         String updateFineAsPaidQuery = "UPDATE fines SET is_paid = true "
-            + "WHERE loan_id = ?";
+            + "FROM Book_Loans "
+            + "WHERE Book_Loans.loan_id = fines.loan_id "
+            + "AND Book_Loans.card_id = ?";
 
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(updateFineAsPaidQuery)) {
-            pstmt.setInt(1, userSelectedFine.getLoanId());
+            pstmt.setInt(1, borrower.getCardId());
             ResultSet rs = pstmt.executeQuery();
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

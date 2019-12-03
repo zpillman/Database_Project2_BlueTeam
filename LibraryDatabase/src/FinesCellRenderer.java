@@ -19,12 +19,8 @@ public class FinesCellRenderer extends JLabel implements ListCellRenderer {
     BookLoan bookLoan = fine.getBookLoan();
 
     String displayString = "Name: " + borrower.getBname() + " " + borrower.getBnameLast()
-        + "   " + "Isbn: " + bookLoan.getIsbn()
-        + "   " + "Loan id: " + bookLoan.getLoanId()
-        + "   " + "Date Out: " + bookLoan.getDateOut()
-        + "   " + "Due Date: " + bookLoan.getDueDate()
         + "   " + "Fine Amt: " + fine.getFineAmt()
-        + "   " + "Is Paid?" + fine.isPaid();
+        + "   " + "Is Paid? " + fine.isPaid();
 
     setText(displayString);
     if (isSelected) {
