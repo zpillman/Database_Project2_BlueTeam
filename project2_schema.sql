@@ -117,7 +117,7 @@ CREATE TABLE Fines
 (
  loan_id  serial NOT NULL,
  fine_amt decimal NOT NULL,
- is_paid  boolean NOT NULL
+ is_paid  boolean NOT NULL DEFAULT false
 );
 
 CREATE UNIQUE INDEX PK_Fines ON Fines

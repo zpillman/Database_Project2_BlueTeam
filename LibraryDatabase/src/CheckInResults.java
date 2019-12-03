@@ -126,9 +126,6 @@ public class CheckInResults extends javax.swing.JFrame {
         //get the user selected option from the list
         BookLoan userSelectedOption = (BookLoan) CheckInResults_List.getSelectedValue();
 
-        //TODO remove me
-        System.out.println(userSelectedOption);
-
         checkInBook(userSelectedOption.getLoanId(), userSelectedOption.getIsbn());
 
         CheckInSuccess cis = new CheckInSuccess();

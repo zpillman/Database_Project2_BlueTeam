@@ -56,11 +56,6 @@ public class CheckOutResults extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         CheckOutResults_List.setCellRenderer(new BookCellRenderer());
-        //jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants
-            //.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //CheckOutResults_List.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        //CheckOutResults_List.setPreferredSize(new java.awt.Dimension(100, 100));
         jScrollPane1.setViewportView(CheckOutResults_List);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -119,9 +114,6 @@ public class CheckOutResults extends javax.swing.JFrame {
     private void CheckOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutButtonActionPerformed
         Book userSelectedBook = (Book)CheckOutResults_List.getSelectedValue();
         isbn10 = userSelectedBook.getIsbn();
-
-        //TODO remove me
-        System.out.println(userSelectedBook);
 
         CheckOutVerify cov = new CheckOutVerify(isbn10);
         cov.setVisible(true);

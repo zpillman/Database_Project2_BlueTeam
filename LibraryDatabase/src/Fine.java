@@ -1,4 +1,6 @@
 public class Fine {
+  Borrower borrower;
+  BookLoan bookLoan;
   private int loanId;
   private double fineAmt;
   private boolean isPaid;
@@ -10,6 +12,22 @@ public class Fine {
     this.loanId = loanId;
     this.fineAmt = fineAmt;
     this.isPaid = isPaid;
+  }
+
+  public Borrower getBorrower() {
+    return borrower;
+  }
+
+  public void setBorrower(Borrower borrower) {
+    this.borrower = borrower;
+  }
+
+  public BookLoan getBookLoan() {
+    return bookLoan;
+  }
+
+  public void setBookLoan(BookLoan bookLoan) {
+    this.bookLoan = bookLoan;
   }
 
   public int getLoanId() {
