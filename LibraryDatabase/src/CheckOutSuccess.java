@@ -92,7 +92,7 @@ public class CheckOutSuccess extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckOutSuccess_FinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutSuccess_FinishActionPerformed
-        System.exit(0);        // TODO add your handling code here:
+        dispose();        
     }//GEN-LAST:event_CheckOutSuccess_FinishActionPerformed
 
     private void CheckOutSuccess_COAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutSuccess_COAActionPerformed
