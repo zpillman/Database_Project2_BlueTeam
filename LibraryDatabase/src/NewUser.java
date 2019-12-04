@@ -227,6 +227,22 @@ public class NewUser extends javax.swing.JFrame {
         newUser.setState(NewUser_State.getText());
         newUser.setPhone(NewUser_PhoneNumber.getText());
 
+        String getTotalBorrowerCountQuery = "SELECT COUNT(*) AS Borrower_Count FROM Borrower ";
+        int totalBorrowers = 1000;
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getTotalBorrowerCountQuery)) {
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                totalBorrowers = rs.getInt("Borrower_Count");
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        newUser.setCardId(totalBorrowers + 1);
+
+
         try{
             createNewUser(newUser);
         } catch (Exception e) {
@@ -238,12 +254,10 @@ public class NewUser extends javax.swing.JFrame {
         }
 
         JOptionPane.showMessageDialog(null,
-            "User was created Successfully",
+            "User was created Successfully, Card ID: " + newUser.getCardId(),
             "User Created",
             JOptionPane.INFORMATION_MESSAGE);
 
-        Library lib = new Library();
-        lib.setVisible(true);
         dispose();
     }//GEN-LAST:event_NewUser_OKActionPerformed
 

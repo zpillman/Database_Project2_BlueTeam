@@ -164,17 +164,15 @@ public class Library extends javax.swing.JFrame {
         + "JOIN Book_Loans ON fines.loan_id = Book_Loans.loan_id "
         + "JOIN Borrower ON Book_Loans.card_id = Borrower.card_id "
         + "WHERE NOT fines.is_paid "
-        + "GROUP BY Borrower.card_id, Borrower.Bname, Borrower.bname_last, is_paid;";
+        + "GROUP BY Borrower.card_id, Borrower.Bname, Borrower.bname_last, is_paid ";
 
     try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(getListOfUnpaidFines)) {
       ResultSet rs = pstmt.executeQuery();
 
       while(rs.next()) {
         Fine fine = new Fine();
-        BookLoan bookLoan = new BookLoan();
         Borrower borrower = new Borrower();
 
-        //fine.setLoanId(rs.getInt("loan_id"));
         fine.setFineAmt(rs.getDouble("total_amt"));
         fine.setPaid(false);
 
@@ -182,12 +180,6 @@ public class Library extends javax.swing.JFrame {
         borrower.setBnameLast(rs.getString("Bname_last"));
         borrower.setCardId(rs.getInt("card_id"));
 
-        /*bookLoan.setLoanId(rs.getInt("loan_id"));
-        bookLoan.setIsbn(rs.getString("isbn"));
-        bookLoan.setDateOut(rs.getDate("date_out"));
-        bookLoan.setDueDate(rs.getDate("due_date"));*/
-
-        //fine.setBookLoan(bookLoan);
         fine.setBorrower(borrower);
 
         finesList.add(fine);

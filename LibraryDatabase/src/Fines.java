@@ -47,7 +47,7 @@ public class Fines extends javax.swing.JFrame {
 
         Fines_Paid = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jList1 = new javax.swing.JList(finesList);
         Fines_Back = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -59,6 +59,8 @@ public class Fines extends javax.swing.JFrame {
                 Fines_PaidActionPerformed(evt);
             }
         });
+
+        jList1.setCellRenderer(new FinesCellRenderer());
 
         jScrollPane1.setViewportView(jList1);
 
@@ -157,8 +159,6 @@ public class Fines extends javax.swing.JFrame {
             "Successfully Paid",
             JOptionPane.INFORMATION_MESSAGE);
 
-        Library library = new Library();
-        library.setVisible(true);
         dispose();
     }//GEN-LAST:event_Fines_PaidActionPerformed
 

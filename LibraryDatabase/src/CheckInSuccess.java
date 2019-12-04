@@ -90,19 +90,19 @@ public class CheckInSuccess extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CheckInSuccess_FinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInSuccess_FinishActionPerformed
-System.exit(0);
+        dispose();
     }//GEN-LAST:event_CheckInSuccess_FinishActionPerformed
 
     private void CheckInSuccess_CIAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInSuccess_CIAActionPerformed
-CheckIn ci = new CheckIn();
-ci.setVisible(true);
-dispose();
+        CheckIn ci = new CheckIn();
+        ci.setVisible(true);
+        dispose();
     }//GEN-LAST:event_CheckInSuccess_CIAActionPerformed
 
     private void CheckInSuccess_COActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckInSuccess_COActionPerformed
-CheckOut co = new CheckOut();
-co.setVisible(true);
-dispose();
+        CheckOut co = new CheckOut();
+        co.setVisible(true);
+        dispose();
         
     }//GEN-LAST:event_CheckInSuccess_COActionPerformed
 

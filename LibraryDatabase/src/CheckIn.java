@@ -54,7 +54,7 @@ public class CheckIn extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel1.setText("Please input book id, card number, or your name");
+        jLabel1.setText("Please input book title, card number, or your name");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -129,7 +129,9 @@ public class CheckIn extends javax.swing.JFrame {
             + "JOIN Borrower ON Borrower.card_id = Book_Loans.card_id "
             + "WHERE (Borrower.bname ILIKE ? "
             + "OR Borrower.bname_last ILIKE ? "
-            + "OR Book.isbn ILIKE ? )"
+            + "OR Book.isbn ILIKE ? "
+            + "OR (Borrower.bname || ' ' || Borrower.bname_last) ILIKE ?"
+            + "OR CAST(Borrower.card_id as VARCHAR(64)) ILIKE ? ) "
             + "AND Book_Loans.date_in IS NULL ";
 
         List<BookLoan> bookLoans = new ArrayList<>();
@@ -138,7 +140,8 @@ public class CheckIn extends javax.swing.JFrame {
             pstmt.setString(1, term);
             pstmt.setString(2, term);
             pstmt.setString(3, term);
-
+            pstmt.setString(4, term);
+            pstmt.setString(5, term);
 
             ResultSet rs = pstmt.executeQuery();
 
