@@ -143,9 +143,9 @@ public class CheckOutVerify extends javax.swing.JFrame {
     }//GEN-LAST:event_CheckOutVerify_ContinueActionPerformed
 
     private void CheckOutVerify_NewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckOutVerify_NewUserActionPerformed
-NewUser nu = new NewUser();
-nu.setVisible(true);
-dispose();
+      NewUser nu = new NewUser();
+      nu.setVisible(true);
+      dispose();
     }//GEN-LAST:event_CheckOutVerify_NewUserActionPerformed
 
     public List<Borrower> findBorrowerByID(int cardID) {

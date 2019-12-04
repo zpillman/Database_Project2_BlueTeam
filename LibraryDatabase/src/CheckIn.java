@@ -124,7 +124,7 @@ public class CheckIn extends javax.swing.JFrame {
         term = "%" + term + "%";
         String searchBookLoansByTerm = "SELECT DISTINCT Book_Loans.loan_id, Book_Loans.date_out, "
             + "Book_Loans.due_date, Borrower.card_id, "
-            + "Borrower.bname, Borrowers.bname_last, Book.isbn FROM Book_Loans "
+            + "Borrower.bname, Borrower.bname_last, Book.isbn FROM Book_Loans "
             + "JOIN Book ON Book.isbn = Book_Loans.isbn "
             + "JOIN Borrower ON Borrower.card_id = Book_Loans.card_id "
             + "WHERE (Borrower.bname ILIKE ? "
