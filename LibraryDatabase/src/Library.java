@@ -37,27 +37,19 @@ public class Library extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jLabel1 = new javax.swing.JLabel();
         Library_CI = new javax.swing.JButton();
         Library_CO = new javax.swing.JButton();
         Library_NewUser = new javax.swing.JButton();
+        Library_ViewFines = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Library");
         setBounds(new java.awt.Rectangle(500, 100, 1000, 1000));
-        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel1.setText("Welcome to the Library");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(71, 118, 0, 0);
-        getContentPane().add(jLabel1, gridBagConstraints);
 
         Library_CI.setText("Check In");
         Library_CI.addActionListener(new java.awt.event.ActionListener() {
@@ -65,14 +57,6 @@ public class Library extends javax.swing.JFrame {
                 Library_CIActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 5;
-        gridBagConstraints.ipady = 31;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(55, 112, 0, 0);
-        getContentPane().add(Library_CI, gridBagConstraints);
 
         Library_CO.setText("Check Out");
         Library_CO.addActionListener(new java.awt.event.ActionListener() {
@@ -80,13 +64,6 @@ public class Library extends javax.swing.JFrame {
                 Library_COActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipady = 31;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(55, 122, 0, 107);
-        getContentPane().add(Library_CO, gridBagConstraints);
 
         Library_NewUser.setText("New User");
         Library_NewUser.addActionListener(new java.awt.event.ActionListener() {
@@ -94,12 +71,50 @@ public class Library extends javax.swing.JFrame {
                 Library_NewUserActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(117, 186, 477, 0);
-        getContentPane().add(Library_NewUser, gridBagConstraints);
+
+        Library_ViewFines.setText("View Fines");
+        Library_ViewFines.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Library_ViewFinesActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(310, 310, 310)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(112, 112, 112)
+                        .addComponent(Library_CI, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(486, 486, 486)
+                        .addComponent(Library_CO))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(378, 378, 378)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Library_ViewFines, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(Library_NewUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(107, 107, 107))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(jLabel1)
+                .addGap(55, 55, 55)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Library_CI, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Library_CO, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(117, 117, 117)
+                .addComponent(Library_NewUser)
+                .addGap(38, 38, 38)
+                .addComponent(Library_ViewFines)
+                .addContainerGap())
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -119,6 +134,12 @@ NewUser nu = new NewUser();
 nu.setVisible(true);
 dispose();// TODO add your handling code here:
     }//GEN-LAST:event_Library_NewUserActionPerformed
+
+    private void Library_ViewFinesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Library_ViewFinesActionPerformed
+Fines f = new Fines();
+f.setVisible(true);
+dispose();
+    }//GEN-LAST:event_Library_ViewFinesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -159,6 +180,7 @@ dispose();// TODO add your handling code here:
     private javax.swing.JButton Library_CI;
     private javax.swing.JButton Library_CO;
     private javax.swing.JButton Library_NewUser;
+    private javax.swing.JButton Library_ViewFines;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
