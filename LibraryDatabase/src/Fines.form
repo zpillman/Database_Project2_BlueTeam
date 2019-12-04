@@ -27,9 +27,10 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="380" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <EmptySpace min="0" pref="327" max="32767" attributes="0"/>
+                      <Component id="Fines_Back" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="Fines_Paid" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -43,7 +44,10 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="256" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="Fines_Paid" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="Fines_Paid" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="Fines_Back" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -52,7 +56,7 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="Fines_Paid">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Paid"/>
+        <Property name="text" type="java.lang.String" value="Pay"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Fines_PaidActionPerformed"/>
@@ -77,5 +81,13 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="Fines_Back">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Back"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Fines_BackActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
